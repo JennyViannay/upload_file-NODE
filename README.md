@@ -1,4 +1,4 @@
-# This is a server node/express ready to be upload file
+# This is a server node/express ready to upload file
 
 ## First clone the project
 
