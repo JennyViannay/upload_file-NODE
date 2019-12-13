@@ -1,6 +1,6 @@
 const mysql = require('mysql')
 const bdd_name = 'db_upload'
-const port = 8889
+const port = 3306
 const connection = mysql.createConnection({
     host: 'localhost',
     port: port,

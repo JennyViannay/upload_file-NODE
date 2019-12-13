@@ -15,17 +15,11 @@ router.post("/file", upload.array("file"), (req, res, next) => {
         const objectFile = {
           name : "public/" + file.originalname
         }
-        connection.query("INSERT INTO file SET ?", objectFile, error => {
-          if (error) {
-            res.send({
-              code: 500,
-              failed: "Error ocurred"
-            });
+        connection.query("INSERT INTO file SET ?", objectFile, err => {
+          if (err) {
+            res.send("Error ocurred").status(500);
           } else {
-            res.send({
-              code: 200,
-              success: "Files uploaded sucessfully"
-            });
+            res.send("Files uploaded sucessfully").status(200);
           }
         })
       }
