@@ -1,31 +1,36 @@
-const express = require("express")
-const connection = require('../../config_bdd/config')
-const router = express.Router()
-const multer = require('multer')
-
-// Multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, 'public')
-    },
-    filename: (req, file, cb) => {
-      cb(null, file.fieldname + '-' + Date.now())
-    }
-});
-
-const upload = multer({storage: storage})
+const express = require("express");
+const connection = require("../../config_bdd/config");
+const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: "public/" });
+const fs = require("fs");
 
 // Routes
-router.post('/', upload.array('file', 12), (req, res, next) => {
-    console.log(req.files)
-    const files = req.files
-    if (!files) {
-      const error = new Error('Please choose files')
-      error.httpStatusCode = 400
-      return next(error)
-    }
-      res.send(files)
-})
+router.post("/file", upload.array("file"), (req, res, next) => {
+  req.files.map(file => {
+    fs.rename(file.path, "public/" + file.originalname, err => {
+      if (err) {
+        res.send("Problem during travel").status(500);
+      } else {
+        const objectFile = {
+          name : "public/" + file.originalname
+        }
+        connection.query("INSERT INTO file SET ?", objectFile, error => {
+          if (error) {
+            res.send({
+              code: 500,
+              failed: "Error ocurred"
+            });
+          } else {
+            res.send({
+              code: 200,
+              success: "Files uploaded sucessfully"
+            });
+          }
+        })
+      }
+    })
+  })
+});
 
-
-module.exports = router
+module.exports = router;
